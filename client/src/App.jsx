@@ -12,13 +12,9 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={
-          <h1 className='text-3xl font-bold text-center mt-20'>
-            Welcome to HRMS Dashboard
-          </h1>
-        } />
 
-        <Route path="/signin" element={<Login />} />
+
+        <Route path="/" element={<Login />} />
 
         {/* Single Entry Point */}
         <Route
