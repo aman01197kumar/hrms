@@ -36,8 +36,8 @@ const PendingTasks = ({ setShowModal, pendingTasks }) => {
                             {pendingTasks.map((task) => (
                                 <tr key={task.id} className="text-center">
                                     <td className="p-2 border">{task.title}</td>
-                                    <td className="p-2 border">{task.assignedTo}</td>
-                                    <td className="p-2 border">{task.employeeId}</td>
+                                    <td className="p-2 border">{task.assignedToName}</td>
+                                    <td className="p-2 border">{task.assignedToId}</td>
                                     <td className="p-2 border">
                                         <span
                                             className={`px-2 py-1 rounded text-xs ${task.status === "Completed"

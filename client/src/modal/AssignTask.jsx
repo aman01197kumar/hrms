@@ -13,7 +13,10 @@ const AssignTask = ({ setShowAssignModal, taskData, setTaskData }) => {
                 title: taskData.title,
                 description: taskData.description,
                 deadline: taskData.deadline,
-                priority: taskData.priority
+                priority: taskData.priority,
+                managerId: employee.managerId,
+                employeeName: employee.name,
+                jobProfile: employee.jobProfile
             },
                 {
                     headers: {

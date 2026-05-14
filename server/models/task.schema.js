@@ -5,13 +5,16 @@ const taskSchema = new mongoose.Schema(
     title: { type: String, required: true },
     description: String,
 
-    assignedTo: {
+    assignedToId: {
       type: String, // employeeId
       required: true,
       index: true,
     },
-
-    assignedBy: {
+    assignedToName: {
+      type: String, // employee name
+      required: true,
+    },
+    assignedById: {
       type: String, // manager employeeId
       required: true,
       index: true,
@@ -19,6 +22,10 @@ const taskSchema = new mongoose.Schema(
 
     deadline: Date,
 
+    jobProfile: {
+      type: String,
+      enum: ["Developer", "Designer", "QA", "HR", "Sales"],
+    },
     priority: {
       type: String,
       enum: ["Low", "Medium", "High"],

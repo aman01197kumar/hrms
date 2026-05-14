@@ -159,7 +159,7 @@ export const assignManagerToEmployee = async (req, res) => {
 };
 
 
-export const getManagerInfo = async (req, res) => {
+export const getEmployeeInfo = async (req, res) => {
     try {
         
         const authHeader = req.headers.authorization;
@@ -169,11 +169,11 @@ export const getManagerInfo = async (req, res) => {
         }
         const token = authHeader.split(" ")[1];
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const manager = await Employee.findOne({ managerId: decoded.managerId });
-        if (!manager) {
-            return res.status(404).json({ message: "Manager not found" });
+        const employee = await Employee.findOne({ employeeId: decoded.employeeId });
+        if (!employee) {
+            return res.status(404).json({ message: "Employee not found" });
         }
-        res.status(200).json({ manager });
+        res.status(200).json({ employee });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

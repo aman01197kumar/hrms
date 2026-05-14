@@ -1,38 +1,33 @@
-import React, { useState } from 'react'
+import axios from 'axios';
+import React, { use, useEffect, useState } from 'react'
 
 const TaskAssigned = () => {
     const [search, setSearch] = useState("");
+    const [tasksData, setTasksData] = useState([]);
 
-    const tasksData = [
-        {
-            empId: "EMP101",
-            empName: "Aman Kumar",
-            jobProfile: "Frontend Developer",
-            title: "Build Login UI",
-            status: "Completed",
-        },
-        {
-            empId: "EMP102",
-            empName: "Riya Sharma",
-            jobProfile: "Backend Developer",
-            title: "API Integration",
-            status: "In Progress",
-        },
-        {
-            empId: "EMP103",
-            empName: "Rahul Verma",
-            jobProfile: "Full Stack Developer",
-            title: "Dashboard Module",
-            status: "Pending",
-        },
-    ];
 
+    const fetchedTasksData = async()=>{
+            try {
+                const response = await axios.get('http://localhost:3000/tasks/get-tasks-assigned', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem("token")}`
+                    }
+                });
+                setTasksData(response?.data?.tasks || []);
+            } catch (error) {
+                console.error("Error fetching tasks:", error);
+            }
+        };
+
+        useEffect(() => {
+            fetchedTasksData();
+        }, []);
     const filteredEmployees = tasksData.filter((task) => {
         const query = search.toLowerCase();
 
         return (
-            task.empName.toLowerCase().includes(query) ||
-            task.empId.toLowerCase().includes(query) ||
+            task.assignedToName.toLowerCase().includes(query) ||
+            task.assignedToId.toLowerCase().includes(query) ||
             task.title.toLowerCase().includes(query)
         );
     });
@@ -74,9 +69,9 @@ const TaskAssigned = () => {
                                 key={index}
                                 className="border-b hover:bg-gray-50 transition"
                             >
-                                <td className="p-3">{task.empId}</td>
+                                <td className="p-3">{task.assignedToId}</td>
                                 <td className="p-3 font-medium text-gray-800">
-                                    {task.empName}
+                                    {task.assignedToName}
                                 </td>
                                 <td className="p-3 text-gray-500">
                                     {task.jobProfile}

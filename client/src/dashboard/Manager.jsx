@@ -15,6 +15,7 @@ export default function ManagerDashboard() {
     const [showAssignModal, setShowAssignModal] = useState(false);
     const [manager, setManager] = useState(null);
     const [employees, setEmployees] = useState([]);
+    const [pendingTasks, setPendingTasks] = useState([]);
     const token = localStorage.getItem("token");
 
     const [taskData, setTaskData] = useState({
@@ -24,24 +25,24 @@ export default function ManagerDashboard() {
         priority: "Medium",
     });
 
-    const pendingTasks = [
-        {
-            id: 1,
-            title: "Build Login UI",
-            assignedTo: "Rahul",
-            employeeId: "EMP101",
-            status: "In Progress",
-            deadline: "2026-05-20",
-        },
-        {
-            id: 2,
-            title: "API Integration",
-            assignedTo: "Sneha",
-            employeeId: "EMP102",
-            status: "Pending",
-            deadline: "2026-05-18",
-        },
-    ];
+    // const pendingTasks = [
+    //     {
+    //         id: 1,
+    //         title: "Build Login UI",
+    //         assignedTo: "Rahul",
+    //         employeeId: "EMP101",
+    //         status: "In Progress",
+    //         deadline: "2026-05-20",
+    //     },
+    //     {
+    //         id: 2,
+    //         title: "API Integration",
+    //         assignedTo: "Sneha",
+    //         employeeId: "EMP102",
+    //         status: "Pending",
+    //         deadline: "2026-05-18",
+    //     },
+    // ];
 
     const activeEmployees = [
         {
@@ -68,12 +69,12 @@ export default function ManagerDashboard() {
 
     const fetchManagerData = async () => {
         try {
-            const response = await axios.get('http://localhost:3000/users/get-manager-info', {
+            const response = await axios.get('http://localhost:3000/users/get-employee-info', {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            setManager(response?.data?.manager || {});
+            setManager(response?.data?.employee || {});
         }
         catch (error) {
             console.error("Error fetching manager data:", error.message);
@@ -94,10 +95,25 @@ export default function ManagerDashboard() {
         }
     }
 
+    const getPendingTasks = async () => {
+        try {
+            const response = await axios.get('http://localhost:3000/tasks/get-pending-tasks', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            console.log("Fetched Pending Tasks:", response?.data?.tasks);
+            setPendingTasks(response?.data?.tasks || []);
+            // You can set this data to state if you want to display it in the modal
+        } catch (error) {
+            console.error("Error fetching pending tasks:", error.message);
+        }
+    }
 
     useEffect(() => {
         fetchManagerData();
         fetchEmployees();
+        getPendingTasks();
     }, []);
 
     return (
@@ -135,7 +151,7 @@ export default function ManagerDashboard() {
 
                     <div className="bg-white p-4 rounded-xl shadow text-center" onClick={() => setShowModal(true)}>
                         <p className="text-sm text-gray-500">Pending Tasks</p>
-                        <h2 className="text-xl font-bold">5</h2>
+                        <h2 className="text-xl font-bold">{pendingTasks.length}</h2>
                     </div>
                 </div>
 

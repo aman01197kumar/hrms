@@ -1,32 +1,62 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TaskSection from "../modal/TaskSection";
 import Header from "../layout/Header";
+import axios from "axios";
 
 export default function EmployeeDashboard() {
     const [isClockedIn, setIsClockedIn] = useState(false);
+    const [employee, setEmployee] = useState({});
+    const [tasks, setTasks] = useState([]);
 
-    const employee = {
-        name: "Aman Kumar",
-        email: "aman@company.com",
-        role: "Frontend Developer",
-        department: "Engineering",
-        manager: "Rahul Sharma",
+    const fetchEmployeeData = async () => {
+        try {
+            const response = await axios.get('http://localhost:3000/users/get-employee-info', {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem("token")}`
+                }
+            });
+            console.log(response?.data, 'vknk')
+            setEmployee(response?.data?.employee || {});
+        }
+        catch (error) {
+            console.error("Error fetching employee data:", error.message);
+        }
+    }
+
+
+    // const [tasks, setTasks] = useState([
+    //     {
+    //         id: 1,
+    //         title: "Complete onboarding docs",
+    //         status: "Pending",
+    //         description: "Finish HR onboarding and upload documents",
+    //     },
+    //     {
+    //         id: 2,
+    //         title: "Submit weekly report",
+    //         status: "In Progress",
+    //         description: "Prepare and submit weekly status report",
+    //     },
+    // ]);
+
+    const fetchMyTasks = async () => {
+        try {
+            const response = await axios.get('http://localhost:3000/tasks/get-my-tasks', {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem("token")}`
+                }
+            });
+            setTasks(response?.data?.tasks || []);
+        }
+        catch (error) {
+            console.error("Error fetching my tasks:", error.message);
+        }
     };
 
-    const [tasks, setTasks] = useState([
-        {
-            id: 1,
-            title: "Complete onboarding docs",
-            status: "Pending",
-            description: "Finish HR onboarding and upload documents",
-        },
-        {
-            id: 2,
-            title: "Submit weekly report",
-            status: "In Progress",
-            description: "Prepare and submit weekly status report",
-        },
-    ]);
+    useEffect(() => {
+        fetchEmployeeData();
+        fetchMyTasks();
+    }, []);
 
     const [selectedTask, setSelectedTask] = useState(null);
     const [updatedStatus, setUpdatedStatus] = useState("");
@@ -67,184 +97,187 @@ export default function EmployeeDashboard() {
 
     return (
         <>
-        <Header/>
-        <div className="min-h-screen bg-gray-100 p-6">
-            {/* HEADER */}
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold text-gray-800">
-                    Employee Dashboard
-                </h1>
+            <Header />
+            <div className="min-h-screen bg-gray-100 p-6">
+                {/* HEADER */}
+                <div className="flex justify-between items-center mb-6">
+                    <h1 className="text-2xl font-bold text-gray-800">
+                        Employee Dashboard
+                    </h1>
 
-                <button
-                    onClick={handleClock}
-                    className={`px-4 py-2 rounded-lg font-medium transition 
+                    <button
+                        onClick={handleClock}
+                        className={`px-4 py-2 rounded-lg font-medium transition 
             ${isClockedIn
-                            ? "bg-red-500 hover:bg-red-600 text-white"
-                            : "bg-green-500 hover:bg-green-600 text-white"
-                        }`}
-                >
-                    {isClockedIn ? "Clock Out" : "Clock In"}
-                </button>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-6">
-                {/* EMPLOYEE INFO */}
-                <div className="bg-white p-5 rounded-xl shadow">
-                    <h2 className="text-lg font-semibold mb-4 text-gray-700">
-                        Employee Details
-                    </h2>
-
-                    <p className="text-sm text-gray-600">
-                        <strong>Name:</strong> {employee.name}
-                    </p>
-                    <p className="text-sm text-gray-600">
-                        <strong>Email:</strong> {employee.email}
-                    </p>
-                    <p className="text-sm text-gray-600">
-                        <strong>Role:</strong> {employee.role}
-                    </p>
-                    <p className="text-sm text-gray-600">
-                        <strong>Department:</strong> {employee.department}
-                    </p>
-
-                    <div className="mt-4 border-t pt-3">
-                        <p className="text-sm text-gray-600">
-                            <strong>Reporting Manager:</strong>
-                        </p>
-                        <p className="text-indigo-600 font-medium">
-                            {employee.manager}
-                        </p>
-                    </div>
+                                ? "bg-red-500 hover:bg-red-600 text-white"
+                                : "bg-green-500 hover:bg-green-600 text-white"
+                            }`}
+                    >
+                        {isClockedIn ? "Clock Out" : "Clock In"}
+                    </button>
                 </div>
 
-                {/* TASK SECTION */}
-                <div className="bg-white p-5 rounded-xl shadow md:col-span-2">
-                    <h2 className="text-lg font-semibold mb-4 text-gray-700">
-                        Assigned Tasks
-                    </h2>
-
-                    <TaskSection tasks={tasks} setTasks={setTasks} />
-                </div>
-            </div>
-
-            {/* EXTRA SECTION */}
-            <div className="grid md:grid-cols-2 gap-6 mt-6">
-                {/* ATTENDANCE */}
-                <div className="bg-white p-5 rounded-xl shadow">
-                    <h2 className="text-lg font-semibold mb-4 text-gray-700">
-                        Attendance
-                    </h2>
-
-                    <p className="text-sm text-gray-600">
-                        Today Status:
-                        <span
-                            className={`ml-2 font-medium ${isClockedIn ? "text-green-600" : "text-red-500"
-                                }`}
-                        >
-                            {isClockedIn ? "Working" : "Not Clocked In"}
-                        </span>
-                    </p>
-                </div>
-
-                {/* QUICK ACTIONS */}
-                <div className="bg-white p-5 rounded-xl shadow">
-                    <h2 className="text-lg font-semibold mb-4 text-gray-700">
-                        Quick Actions
-                    </h2>
-
-                    <div className="flex flex-col gap-3">
-                        <button className="py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
-                            Apply Leave
-                        </button>
-
-                        <button className="py-2 bg-gray-200 rounded-lg hover:bg-gray-300">
-                            View Payslip
-                        </button>
-
-                        <button className="py-2 bg-gray-200 rounded-lg hover:bg-gray-300">
-                            Update Profile
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            {/* TASK MODAL */}
-            {selectedTask && (
-                <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center">
-                    <div className="bg-white w-96 p-6 rounded-xl shadow-lg space-y-4">
-                        <h2 className="text-lg font-semibold">
-                            {selectedTask.title}
+                <div className="grid md:grid-cols-3 gap-6">
+                    {/* EMPLOYEE INFO */}
+                    <div className="bg-white p-5 rounded-xl shadow">
+                        <h2 className="text-lg font-semibold mb-4 text-gray-700">
+                            Employee Details
                         </h2>
 
                         <p className="text-sm text-gray-600">
-                            {selectedTask.description}
+                            <strong>Employee ID:</strong> {employee.employeeId}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                            <strong>Name:</strong> {employee.name}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                            <strong>Email:</strong> {employee.email}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                            <strong>Role:</strong> {employee.role}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                            <strong>Department:</strong> {employee.department}
                         </p>
 
-                        {/* STATUS */}
-                        <div>
-                            <p className="text-sm font-medium mb-2">Update Status</p>
-                            <div className="flex gap-3 text-sm">
-                                {["Pending", "In Progress", "Completed"].map(
-                                    (status) => (
-                                        <label key={status} className="flex items-center gap-1">
-                                            <input
-                                                type="radio"
-                                                value={status}
-                                                checked={updatedStatus === status}
-                                                onChange={(e) =>
-                                                    setUpdatedStatus(e.target.value)
-                                                }
-                                            />
-                                            {status}
-                                        </label>
-                                    )
-                                )}
-                            </div>
+                        <div className="mt-4 border-t pt-3">
+                            <p className="text-sm text-gray-600">
+                                <strong>Reporting Manager:</strong>
+                            </p>
+                            <p className="text-indigo-600 font-medium">
+                                {employee.manager}
+                            </p>
                         </div>
+                    </div>
 
-                        {/* DURATION */}
-                        {updatedStatus === "Completed" && (
-                            <div>
-                                <label className="text-sm">Work Duration (hrs)</label>
-                                <input
-                                    type="number"
-                                    value={duration}
-                                    onChange={(e) => setDuration(e.target.value)}
-                                    className="w-full mt-1 px-2 py-1 border rounded"
-                                />
-                            </div>
-                        )}
+                    {/* TASK SECTION */}
+                    <div className="bg-white p-5 rounded-xl shadow md:col-span-2">
+                        <h2 className="text-lg font-semibold mb-4 text-gray-700">
+                            Assigned Tasks
+                        </h2>
 
-                        {/* NOTES */}
-                        <div>
-                            <label className="text-sm">Notes</label>
-                            <textarea
-                                value={notes}
-                                onChange={(e) => setNotes(e.target.value)}
-                                className="w-full mt-1 px-2 py-1 border rounded"
-                            />
-                        </div>
+                        <TaskSection tasks={tasks} setTasks={setTasks} />
+                    </div>
+                </div>
 
-                        {/* ACTIONS */}
-                        <div className="flex justify-end gap-3">
-                            <button
-                                onClick={closeModal}
-                                className="px-3 py-1 bg-gray-200 rounded"
+                {/* EXTRA SECTION */}
+                <div className="grid md:grid-cols-2 gap-6 mt-6">
+                    {/* ATTENDANCE */}
+                    <div className="bg-white p-5 rounded-xl shadow">
+                        <h2 className="text-lg font-semibold mb-4 text-gray-700">
+                            Attendance
+                        </h2>
+
+                        <p className="text-sm text-gray-600">
+                            Today Status:
+                            <span
+                                className={`ml-2 font-medium ${isClockedIn ? "text-green-600" : "text-red-500"
+                                    }`}
                             >
-                                Cancel
+                                {isClockedIn ? "Working" : "Not Clocked In"}
+                            </span>
+                        </p>
+                    </div>
+
+                    {/* QUICK ACTIONS */}
+                    <div className="bg-white p-5 rounded-xl shadow">
+                        <h2 className="text-lg font-semibold mb-4 text-gray-700">
+                            Quick Actions
+                        </h2>
+
+                        <div className="flex flex-col gap-3">
+                            <button className="py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                                Apply Leave
                             </button>
 
-                            <button
-                                onClick={handleSave}
-                                className="px-3 py-1 bg-indigo-600 text-white rounded"
-                            >
-                                Save
+                            <button className="py-2 bg-gray-200 rounded-lg hover:bg-gray-300">
+                                View Payslip
+                            </button>
+
+                            <button className="py-2 bg-gray-200 rounded-lg hover:bg-gray-300">
+                                Update Profile
                             </button>
                         </div>
                     </div>
                 </div>
-            )}
-        </div>
-                                </>
+
+                {/* TASK MODAL */}
+                {selectedTask && (
+                    <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center">
+                        <div className="bg-white w-96 p-6 rounded-xl shadow-lg space-y-4">
+                            <h2 className="text-lg font-semibold">
+                                {selectedTask.title}
+                            </h2>
+
+                            <p className="text-sm text-gray-600">
+                                {selectedTask.description}
+                            </p>
+
+                            {/* STATUS */}
+                            <div>
+                                <p className="text-sm font-medium mb-2">Update Status</p>
+                                <div className="flex gap-3 text-sm">
+                                    {["Pending", "In Progress", "Completed"].map(
+                                        (status) => (
+                                            <label key={status} className="flex items-center gap-1">
+                                                <input
+                                                    type="radio"
+                                                    value={status}
+                                                    checked={updatedStatus === status}
+                                                    onChange={(e) =>
+                                                        setUpdatedStatus(e.target.value)
+                                                    }
+                                                />
+                                                {status}
+                                            </label>
+                                        )
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* DURATION */}
+                            {updatedStatus === "Completed" && (
+                                <div>
+                                    <label className="text-sm">Work Duration (hrs)</label>
+                                    <input
+                                        type="number"
+                                        value={duration}
+                                        onChange={(e) => setDuration(e.target.value)}
+                                        className="w-full mt-1 px-2 py-1 border rounded"
+                                    />
+                                </div>
+                            )}
+
+                            {/* NOTES */}
+                            <div>
+                                <label className="text-sm">Notes</label>
+                                <textarea
+                                    value={notes}
+                                    onChange={(e) => setNotes(e.target.value)}
+                                    className="w-full mt-1 px-2 py-1 border rounded"
+                                />
+                            </div>
+
+                            {/* ACTIONS */}
+                            <div className="flex justify-end gap-3">
+                                <button
+                                    onClick={closeModal}
+                                    className="px-3 py-1 bg-gray-200 rounded"
+                                >
+                                    Cancel
+                                </button>
+
+                                <button
+                                    onClick={handleSave}
+                                    className="px-3 py-1 bg-indigo-600 text-white rounded"
+                                >
+                                    Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </>
     );
 }

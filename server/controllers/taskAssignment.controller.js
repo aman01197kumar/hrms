@@ -17,7 +17,7 @@ export const assignTask = async (req, res) => {
         const token = authHeader.split(" ")[1];
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const managerId = decoded.employeeId; // business id of the manager (e.g., EMP101)
-        const { employeeId, title, description, deadline, priority } = req.body;
+        const { employeeId, employeeName, jobProfile, title, description, deadline, priority } = req.body;
 
         // const managerId = decoded.employeeId; // business id of the manager (e.g., EMP101)
 
@@ -49,10 +49,12 @@ export const assignTask = async (req, res) => {
         const task = await Task.create({
             title,
             description,
-            assignedTo: employeeId,
-            assignedBy: managerId,
+            assignedToId: employeeId,
+            assignedToName: employeeName,
+            assignedById: managerId,
             deadline,
             priority,
+            jobProfile,
         });
 
         return res.status(201).json({
@@ -66,31 +68,86 @@ export const assignTask = async (req, res) => {
     }
 };
 
-        export const getAllTasksAssignedToEmployee = async (req, res) => {
-            try {
-                const authHeader = req.headers.authorization;
+export const getAllTasksAssignedToEmployee = async (req, res) => {
+    try {
+        const authHeader = req.headers.authorization;
 
-                if (!authHeader) {
-                    return res.status(401).json({ message: "Authorization header missing" });
-                }
-                const token = authHeader.split(" ")[1];
-                const decoded = jwt.verify(token, process.env.JWT_SECRET);
-                const managerId = decoded.employeeId;
-
-                const tasks = await Task.find({ assignedBy: managerId });
-
-                if (!tasks) {
-                    return res.status(404).json({
-                        message: "No tasks assigned to employee",
-                    });
-                }
-                return res.status(200).json({
-                    tasks,
-                });
-            }
-            catch (error) {
-                return res.status(500).json({
-                    message: error.message,
-                });
-            }
+        if (!authHeader) {
+            return res.status(401).json({ message: "Authorization header missing" });
         }
+        const token = authHeader.split(" ")[1];
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const managerId = decoded.employeeId;
+
+        const tasks = await Task.find({ assignedById: managerId });
+
+        if (!tasks) {
+            return res.status(404).json({
+                message: "No tasks assigned to employee",
+            });
+        }
+        return res.status(200).json({
+            tasks,
+        });
+    }
+    catch (error) {
+        return res.status(500).json({
+            message: error.message,
+        });
+    }
+}
+
+export const getAllPendingTasks = async (req, res) => {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
+            return res.status(401).json({ message: "Authorization header missing" });
+        }
+        const token = authHeader.split(" ")[1];
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const employeeId = decoded.employeeId;
+
+        const tasks = await Task.find({ assignedById: employeeId, status: "Pending" });
+
+        if (!tasks) {
+            return res.status(404).json({
+                message: "No pending tasks found",
+            });
+        }
+        return res.status(200).json({
+            tasks,
+        });
+    }
+    catch (error) {
+        return res.status(500).json({
+            message: error.message,
+        });
+    }
+}
+
+export const getMyTasks = async (req, res) => {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
+            return res.status(401).json({ message: "Authorization header missing" });
+        }
+        const token = authHeader.split(" ")[1];
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const employeeId = decoded.employeeId;
+
+        const tasks = await Task.find({ assignedToId: employeeId });
+        if (!tasks) {
+            return res.status(404).json({
+                message: "No tasks assigned to you",
+            });
+        }
+        return res.status(200).json({
+            tasks,
+        });
+    }
+    catch (error) {
+        return res.status(500).json({
+            message: error.message,
+        });
+    }
+}
