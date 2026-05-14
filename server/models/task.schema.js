@@ -35,6 +35,10 @@ const taskSchema = new mongoose.Schema(
       required: false,
     },
 
+    duration: {
+      type: Number, // duration in hours or minutes
+      required: false,
+    },
     jobProfile: {
       type: String,
       enum: ["Developer", "Designer", "QA", "HR", "Sales"],

@@ -152,38 +152,44 @@ export const getMyTasks = async (req, res) => {
         });
     }
 }
-    export const updateTaskStatus = async (req, res) => {
-        try {
-            const { taskId } = req.params;
-            const { fileUpload } = req.file;
-            const {status, note} = req.body
-    
-            // Only allow valid status values
-            const validStatuses = ["Pending", "In Progress", "Completed"];
-            if (status && !validStatuses.includes(status)) {
-                return res.status(400).json({ message: "Invalid status value" });
-            }
-    
-            const updateFields = {};
-            if (status) updateFields.status = status;
-            if (note) updateFields.note = note;
-            if (fileUpload) updateFields.fileUpload = fileUpload;
-    
-            const updatedTask = await Task.findByIdAndUpdate(
-                taskId,
-                { $set: updateFields },
-                { new: true }
-            );
-    
-            if (!updatedTask) {
-                return res.status(404).json({ message: "Task not found" });
-            }
-    
-            return res.status(200).json({
-                message: "Task updated successfully",
-                task: updatedTask,
-            });
-        } catch (error) {
-            return res.status(500).json({ message: error.message });
+export const updateTaskStatus = async (req, res) => {
+    try {
+        const { taskId } = req.params;
+        const { status, note,duration } = req.body;
+
+        const file = req.file; // ✅ get file from multer
+
+        const validStatuses = ["Pending", "In Progress", "Completed"];
+        if (status && !validStatuses.includes(status)) {
+            return res.status(400).json({ message: "Invalid status value" });
         }
-    };
+
+        const updateFields = {};
+
+        if (status) updateFields.status = status;
+        if (note) updateFields.note = note;
+        if(duration) updateFields.duration = duration;
+
+        if (file) {
+            updateFields.fileUpload = file.path; // ✅ important
+        }
+
+        const updatedTask = await Task.findByIdAndUpdate(
+            taskId,
+            { $set: updateFields },
+            { new: true }
+        );
+
+        if (!updatedTask) {
+            return res.status(404).json({ message: "Task not found" });
+        }
+
+        return res.status(200).json({
+            message: "Task updated successfully",
+            task: updatedTask,
+        });
+
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};

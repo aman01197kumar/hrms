@@ -28,6 +28,7 @@ try{
 
 app.use('/users', userroute);
 app.use('/tasks', taskroute);
+app.use('/uploads', express.static('uploads'));
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
