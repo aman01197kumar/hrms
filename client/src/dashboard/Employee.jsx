@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import TaskSection from "../component/TaskSection";
 import Header from "../layout/Header";
 import axios from "axios";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function EmployeeDashboard() {
     const [isClockedIn, setIsClockedIn] = useState(false);
@@ -19,11 +20,10 @@ export default function EmployeeDashboard() {
                     'Authorization': `Bearer ${localStorage.getItem("token")}`
                 }
             });
-            console.log(response?.data, 'vknk')
             setEmployee(response?.data?.employee || {});
         }
         catch (error) {
-            console.error("Error fetching employee data:", error.message);
+            toast.error(error?.response?.data?.message);
         }
     }
 
@@ -38,7 +38,7 @@ export default function EmployeeDashboard() {
             setTasks(response?.data?.tasks || []);
         }
         catch (error) {
-            console.error("Error fetching my tasks:", error.message);
+            toast.error(error?.response?.data?.message);
         }
     };
 
@@ -187,6 +187,7 @@ export default function EmployeeDashboard() {
                 </div>
 
             </div>
+            <Toaster />
         </>
     );
 }

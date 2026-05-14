@@ -8,8 +8,10 @@ export const onboardEmployee = async (req, res) => {
     try {
         const { name, email, phone, jobProfile, department, role, joiningDate, employmentType, salary, bankName, accountNumber, ifsc, parmanent_address, emergencyContact } = req.body;
 
-        console.log(name, email, phone, jobProfile, department, role, joiningDate, employmentType, salary, bankName, accountNumber, ifsc, parmanent_address, emergencyContact)
-        // Only allow emails ending with @physicswallah.live
+        if (!name || !email || !phone || !jobProfile || !department || !role || !joiningDate || !employmentType || !salary || !bankName || !accountNumber || !ifsc || !parmanent_address || !emergencyContact) {
+            return res.status(400).json({ message: "All fields are required." });
+        }
+        
         const orgDomain = "@physicswallah.live";
         if (!email.endsWith(orgDomain)) {
             return res.status(400).json({ message: "Only organizational emails are allowed." });
@@ -130,21 +132,18 @@ export const getEmployeesWithManagers = async (req, res) => {
 
 export const assignManagerToEmployee = async (req, res) => {
     try {
-        const authHeader = req.headers.authorization;
+        const {employeeId, managerId} = req.body;
 
-        if (!authHeader) {
-            return res.status(401).json({ message: "Authorization header missing" });
+        if (!employeeId || !managerId) {
+            return res.status(400).json({ message: "Both employeeId and managerId are required." });
         }
-        const token = authHeader.split(" ")[1];
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);// business ids (e.g., EMP102)
-
         // Find employee and manager by business id
-        const employee = await Employee.findOne(decoded.employeeId);
+        const employee = await Employee.findOne({ employeeId });
         if (!employee) {
             return res.status(404).json({ message: "Employee not found" });
         }
 
-        const manager = await Employee.findOne(decoded.managerId);
+        const manager = await Employee.findOne({ employeeId: managerId });
         if (!manager) {
             return res.status(404).json({ message: "Manager not found" });
         }

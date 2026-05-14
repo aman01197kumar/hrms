@@ -4,13 +4,13 @@ import ManagerDashboard from "../dashboard/Manager";
 import AdminDashboard from "../dashboard/Admin";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 const DashboardAccess = () => {
     const [role, setRole] = useState(null);
     const token = localStorage.getItem("token");
 
 
-    // Not logged in
     if (!token) {
         return <Navigate to="/signin" replace />;
     }
@@ -19,18 +19,17 @@ const DashboardAccess = () => {
 
     const fetchUserRole = async () => {
         try {
-            
+
             const response = await axios.post('http://localhost:3000/users/get-role', {}, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            console.log(response?.data?.role, 'roleee')
             setRole(response?.data?.role);
         } catch (error) {
-            console.error("Error fetching user role:", error);
+            toast.error(error?.response?.data?.message);
         }
-        
+
     }
 
 
@@ -42,7 +41,6 @@ const DashboardAccess = () => {
     if (role === null) {
         return <div>Loading...</div>;
     }
-    console.log(role, 'rolee')
     // Role-based rendering
     switch (role) {
         case "Employee":

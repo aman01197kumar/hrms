@@ -1,13 +1,16 @@
 import axios from 'axios';
-import React from 'react'
+import React, { useState } from 'react'
+import toast, { Toaster } from 'react-hot-toast';
 import { useSelector } from 'react-redux';
 
 const AssignTask = ({ setShowAssignModal, taskData, setTaskData }) => {
+    const [isLoading, setIsLoading] = useState(false);
 
     const employee = useSelector((state) => state.user.selectedEmployee);
 
     const assignTaskHandler = async () => {
         try {
+            setIsLoading(true);
             const response = await axios.post('http://localhost:3000/tasks/assign-task', {
                 employeeId: employee.employeeId,
                 title: taskData.title,
@@ -23,11 +26,14 @@ const AssignTask = ({ setShowAssignModal, taskData, setTaskData }) => {
                         'Authorization': `Bearer ${localStorage.getItem("token")}`
                     }
                 });
-            console.log("Task Assigned:", response?.data);
+            toast.success(response?.data?.message);
             setShowAssignModal(false);
 
         } catch (error) {
-            console.error("Error assigning task:", error);
+            toast.error(error?.response?.data?.message);
+        }
+        finally {
+            setIsLoading(false);
         }
     };
     return (
@@ -120,10 +126,11 @@ const AssignTask = ({ setShowAssignModal, taskData, setTaskData }) => {
                         onClick={assignTaskHandler}
                         className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
                     >
-                        Assign
+                        {isLoading ? "Assigning..." : "Assign"}
                     </button>
                 </div>
             </div>
+            <Toaster/>
         </div>
     )
 }

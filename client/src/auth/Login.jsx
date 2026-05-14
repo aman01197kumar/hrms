@@ -1,10 +1,12 @@
 import axios from "axios";
 import { useRef, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
 import {  useNavigate } from "react-router-dom";
 
 export default function Login() {
 
   const [pin, setPin] = useState(["", "", "", "", "", ""]);
+  const[isloading, setIsLoading] = useState(false);
 
   const inputsRef = useRef([]);
 
@@ -34,15 +36,17 @@ export default function Login() {
     e.preventDefault();
     const verificationCode = pin.join("");
 
-    console.log(verificationCode, 'verificationCode')
     try {
+      setIsLoading(true);
       const response = await axios.post('http://localhost:3000/users/authenticate-employee', {verificationCode});
       localStorage.setItem('token', response?.data?.token);
       navigate("/dashboard");
     } catch (error) {
-      console.error("Authentication Error:", error);
+      toast.error(error?.response?.data?.message);
     }
-
+  finally{
+    setIsLoading(false);
+  }
   };
 
   return (
@@ -91,10 +95,11 @@ export default function Login() {
             type="submit"
             className="w-full py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
           >
-            Signin
+            {isloading ? "Signing in..." : "Sign in"}
           </button>
         </form>
       </div>
+      <Toaster />
     </div>
   );
 }

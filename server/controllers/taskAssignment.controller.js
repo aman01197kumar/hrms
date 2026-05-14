@@ -5,8 +5,6 @@ import jwt from "jsonwebtoken";
 export const assignTask = async (req, res) => {
     try {
 
-        // const { managerId, employeeId } = req.user;
-
         const authHeader = req.headers.authorization;
 
         if (!authHeader) {
@@ -17,7 +15,6 @@ export const assignTask = async (req, res) => {
         const managerId = decoded.employeeId; // business id of the manager (e.g., EMP101)
         const { employeeId, employeeName, jobProfile, title, description, deadline, priority, duration, fileUpload, note } = req.body;
 
-        // const managerId = decoded.employeeId; // business id of the manager (e.g., EMP101)
 
         // 1️⃣ Check if manager exists
         const manager = await Employee.findOne({
@@ -185,7 +182,7 @@ export const updateTaskStatus = async (req, res) => {
         }
 
         return res.status(200).json({
-            message: "Task updated successfully",
+            message: "Task submitted successfully",
             task: updatedTask,
         });
 

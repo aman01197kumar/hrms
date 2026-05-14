@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import ManagerAssignment from "../modal/ManagerAssignment";
 import AdminHeader from "../layout/AdminHeader";
 import axios from "axios";
+import { Toaster } from "react-hot-toast";
 
 const AdminDashboard = () => {
     const [search, setSearch] = useState("");
@@ -12,15 +13,15 @@ const AdminDashboard = () => {
     const fetchEmployees = async () => {
         try {
             const response = await axios.get('http://localhost:3000/users/get-all-employees');
-            console.log(response?.data?.employees)
             const filteredResponse = response?.data?.employees?.filter((emp) => emp.role === 'Employee');
             const filteredManagers = response?.data?.employees?.filter((emp) => emp.role === 'Manager');
             setEmployees(filteredResponse || []);
             setManagers(filteredManagers || []);
         }
         catch (error) {
-            console.error('Error fetching employees:', error);
+            toast.error(error?.response?.data?.message);
         }
+        
     }
 
     useEffect(() => {
@@ -171,6 +172,7 @@ const AdminDashboard = () => {
                 </div>
 
             </div>
+            <Toaster/>
         </>
     );
 };

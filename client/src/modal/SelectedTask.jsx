@@ -1,11 +1,13 @@
 import axios from 'axios';
 import React, { useState } from 'react'
+import toast, { Toaster } from 'react-hot-toast';
 
-const SelectedTask = ({ selectedTask,setShowModal }) => {
+const SelectedTask = ({ selectedTask, setShowModal }) => {
     const [updatedStatus, setUpdatedStatus] = useState("");
     const [duration, setDuration] = useState("");
     const [notes, setNotes] = useState("");
-    const [file, setFile] = useState(null); // NEW
+    const [file, setFile] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleFileChange = (e) => {
         const uploadedFile = e.target.files[0];
@@ -32,22 +34,18 @@ const SelectedTask = ({ selectedTask,setShowModal }) => {
             formData.append("file", file); // MUST match multer field name
         }
 
-        // ✅ DEBUG (keep this)
-        for (let [key, value] of formData.entries()) {
-            console.log(key, value);
-        }
-
         try {
-            // console.log(selectedTask,'cnkn')
+            setIsLoading(true);
             const response = await axios.patch(
                 `http://localhost:3000/tasks/update-task/${selectedTask._id}`,
                 formData,
             );
-            console.log("Response:", response?.data);
-
-            //   closeModal();
+            toast.success(response?.data?.message);
+            closeModal();
         } catch (err) {
-            console.error("Error:", err);
+            toast.error(err?.response?.data?.message);
+        } finally {
+            setIsLoading(false);
         }
     };
     return (
@@ -137,10 +135,11 @@ const SelectedTask = ({ selectedTask,setShowModal }) => {
                         onClick={handleSave}
                         className="px-3 py-1 bg-indigo-600 text-white rounded"
                     >
-                        Save
+                        {isLoading ? "Saving..." : "Save"}
                     </button>
                 </div>
             </div>
+            <Toaster />
         </div>
     )
 }

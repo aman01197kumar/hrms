@@ -11,8 +11,6 @@ const Header = () => {
   };
 
   const handleLogout = () => {
-    console.log("Logging out...");
-    // add logout logic here
     localStorage.removeItem("token");
     navigate("/signin");
   };

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import SuccessModal from "./OnboardSuccess";
 import axios from "axios";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function EmployeeOnboardingModal({ isOpen, onClose }) {
     const [formData, setFormData] = useState({
@@ -22,6 +23,7 @@ export default function EmployeeOnboardingModal({ isOpen, onClose }) {
 
     const [showModal, setShowModal] = useState(false);
     const [pin, setPin] = useState(null);
+    const [isLoading, setIsloading] = useState(false);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -30,19 +32,19 @@ export default function EmployeeOnboardingModal({ isOpen, onClose }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        console.log("Form Data:", formData);
-
         // TODO: API call here
         try {
+            setIsloading(true);
             const response = await axios.post('http://localhost:3000/users/onboard-employee', formData);
-            console.log("API Response:", response?.data);
             setPin(response?.data?.pin);
             setShowModal(true);
 
         } catch (error) {
-            console.error("Error submitting form:", error);
+            toast.error(error?.response?.data?.message);
         }
-
+        finally {
+            setIsloading(false);
+        }
     };
 
     const handleSuccessClose = () => {
@@ -134,7 +136,7 @@ export default function EmployeeOnboardingModal({ isOpen, onClose }) {
                         </button>
 
                         <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
-                            Onboard Employee
+                            {isLoading?'processing...':'Onboard Employee'}
                         </button>
                     </div>
                 </form>
@@ -149,6 +151,7 @@ export default function EmployeeOnboardingModal({ isOpen, onClose }) {
                     pin={pin}
                 />
             )}
+            <Toaster />
         </div>
     );
 }

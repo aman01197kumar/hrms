@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { use, useEffect, useState } from 'react'
+import toast, { Toaster } from 'react-hot-toast';
 
 const TaskAssigned = () => {
     const [search, setSearch] = useState("");
@@ -15,13 +16,14 @@ const TaskAssigned = () => {
                 });
                 setTasksData(response?.data?.tasks || []);
             } catch (error) {
-                console.error("Error fetching tasks:", error);
+                toast.error(error?.response?.data?.message);
             }
         };
 
         useEffect(() => {
             fetchedTasksData();
         }, []);
+
     const filteredEmployees = tasksData.filter((task) => {
         const query = search.toLowerCase();
 
@@ -112,6 +114,7 @@ const TaskAssigned = () => {
                     </tbody>
                 </table>
             </div>
+            <Toaster />
         </div>
     )
 }

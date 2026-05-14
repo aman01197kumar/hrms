@@ -11,7 +11,6 @@ export const userSlice = createSlice({
   reducers: {
    
     setSelectedEmployee: (state, action) => {
-        // console.log(action.payload,'resc')
       state.selectedEmployee = action.payload;
     },
   },

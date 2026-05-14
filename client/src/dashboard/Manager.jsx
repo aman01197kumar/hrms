@@ -6,6 +6,7 @@ import TeamMembers from "../table/TeamMembers";
 import TaskAssigned from "../table/TaskAssigned";
 import Header from "../layout/Header";
 import axios from "axios";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function ManagerDashboard() {
     const [clockedIn, setClockedIn] = useState(false);
@@ -25,24 +26,6 @@ export default function ManagerDashboard() {
         priority: "Medium",
     });
 
-    // const pendingTasks = [
-    //     {
-    //         id: 1,
-    //         title: "Build Login UI",
-    //         assignedTo: "Rahul",
-    //         employeeId: "EMP101",
-    //         status: "In Progress",
-    //         deadline: "2026-05-20",
-    //     },
-    //     {
-    //         id: 2,
-    //         title: "API Integration",
-    //         assignedTo: "Sneha",
-    //         employeeId: "EMP102",
-    //         status: "Pending",
-    //         deadline: "2026-05-18",
-    //     },
-    // ];
 
     const activeEmployees = [
         {
@@ -77,7 +60,7 @@ export default function ManagerDashboard() {
             setManager(response?.data?.employee || {});
         }
         catch (error) {
-            console.error("Error fetching manager data:", error.message);
+            toast.error(error?.response?.data?.message);
         }
     }
 
@@ -91,7 +74,7 @@ export default function ManagerDashboard() {
             setEmployees(response?.data?.employees || []);
         }
         catch (error) {
-            console.error("Error fetching employees data:", error.message);
+            toast.error(error?.response?.data?.message);
         }
     }
 
@@ -102,11 +85,11 @@ export default function ManagerDashboard() {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            console.log("Fetched Pending Tasks:", response?.data?.tasks);
+            toast.success("Pending tasks fetched successfully!");
             setPendingTasks(response?.data?.tasks || []);
             // You can set this data to state if you want to display it in the modal
         } catch (error) {
-            console.error("Error fetching pending tasks:", error.message);
+            toast.error(error?.response?.data?.message);
         }
     }
 
@@ -190,6 +173,7 @@ export default function ManagerDashboard() {
                 {showEmployeesModal && <ActiveEmployees setShowEmployeesModal={setShowEmployeesModal} activeEmployees={activeEmployees} />}
                 {showAssignModal && <AssignTask setShowAssignModal={setShowAssignModal} taskData={taskData} setTaskData={setTaskData} />}
             </div>
+            <Toaster />
         </>
     );
 }

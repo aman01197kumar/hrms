@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useState } from 'react'
+import toast, { Toaster } from 'react-hot-toast';
 
 const ManagerAssignment = ({ employees, managers, setShowAssignModal }) => {
 
@@ -7,6 +8,7 @@ const ManagerAssignment = ({ employees, managers, setShowAssignModal }) => {
     const [managerId, setManagerId] = useState("");
     const [employeeId, setEmployeeId] = useState("");
     const [managerSearch, setManagerSearch] = useState("");
+    const [isLoading, setIsLoading] = useState(false)
 
 
     const filteredManagers = managers.filter((mgr) => {
@@ -26,18 +28,17 @@ const ManagerAssignment = ({ employees, managers, setShowAssignModal }) => {
     });
 
     const assignManagerToEmployeeHandler = async () => {
-        console.log(employeeId, managerId)
-        if (!managerId || !employeeId) {
-            alert("Please select both fields");
-            return;
-        }
         try {
+            setIsLoading(true);
             const response = await axios.post('http://localhost:3000/users/assign-manager', { employeeId, managerId })
-            console.log(response?.data)
+            toast.success(response?.data?.message);
+            setShowAssignModal(false);
         }
         catch (error) {
-            console.error("Error assigning manager:", error.message);
-            // alert("Failed to assign manager. Please try again.");
+            toast.error(error?.response?.data?.message);
+        }
+        finally {
+            setIsLoading(false);
         }
     }
     return (
@@ -98,7 +99,7 @@ const ManagerAssignment = ({ employees, managers, setShowAssignModal }) => {
                     <div className="border rounded max-h-32 overflow-y-auto">
                         {filteredEmployeesList.map((emp) => (
                             <div
-                                key={emp.empId} 
+                                key={emp.empId}
                                 onClick={() => {
                                     setEmployeeId(emp.employeeId);
                                     setEmployeeSearch(`${emp.name} (${emp.employeeId})`);
@@ -121,30 +122,14 @@ const ManagerAssignment = ({ employees, managers, setShowAssignModal }) => {
                     </button>
 
                     <button
-                        // onClick={() => {
-                        //     if (!selectedManager || !selectedEmployee) {
-                        //         alert("Please select both fields");
-                        //         return;
-                        //     }
-
-                        //     console.log("Assigned:", {
-                        //         manager: selectedManager,
-                        //         employee: selectedEmployee,
-                        //     });
-
-                        //     setShowAssignModal(false);
-                        //     setManagerSearch("");
-                        //     setEmployeeSearch("");
-                        //     setSelectedManager("");
-                        //     setSelectedEmployee("");
-                        // }}
                         onClick={assignManagerToEmployeeHandler}
                         className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
                     >
-                        Assign
+                        {isLoading ? "Assigning..." : "Assign"}
                     </button>
                 </div>
             </div>
+            <Toaster />
         </div>
     )
 }

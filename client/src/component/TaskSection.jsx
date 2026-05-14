@@ -15,7 +15,6 @@ export default function TaskSection({ tasks, setTasks }) {
     setSelectedTask(task);
     setShowModal(true)
   }
-  // console.log(tasks)
 
   return (
     <>
