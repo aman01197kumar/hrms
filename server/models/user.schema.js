@@ -3,8 +3,7 @@ import mongoose from "mongoose";
 const employeeSchema = new mongoose.Schema(
   {
     managerId: {
-      type: String,
-      ref: "User",
+      type: String, // stores employeeId of manager
       required: false,
       index: true,
       sparse: true,
@@ -49,6 +48,7 @@ const employeeSchema = new mongoose.Schema(
     role: {
       type: String,
       required: true,
+      index: true,
     },
     joiningDate: {
       type: Date,

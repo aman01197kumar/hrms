@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSelector } from 'react-redux';
 import AssignTask from "../modal/AssignTask";
 
 const ViewEmployee = () => {
@@ -10,16 +11,9 @@ const ViewEmployee = () => {
         deadline: "",
         priority: "Medium",
     });
-    const employee = {
-        id: "EMP101",
-        name: "Aman Kumar",
-        jobProfile: "Frontend Developer",
-        joiningDate: "12 Jan 2023",
-        employmentType: "Full-Time",
-        shift: "9:00 AM - 6:00 PM",
-        email: "aman@gmail.com",
-        phone: "+91 9876543210",
-    };
+
+    // Get selected employee from Redux
+    const employee = useSelector((state) => state.user.selectedEmployee);
 
     const tasks = [
         {
@@ -61,17 +55,20 @@ const ViewEmployee = () => {
             {/* ================= EMPLOYEE DETAILS ================= */}
             <div className="bg-white p-6 rounded-2xl shadow">
                 <h2 className="text-xl font-semibold mb-4">Employee Details</h2>
-
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                    <p><strong>ID:</strong> {employee.id}</p>
-                    <p><strong>Name:</strong> {employee.name}</p>
-                    <p><strong>Job Profile:</strong> {employee.jobProfile}</p>
-                    <p><strong>Joining Date:</strong> {employee.joiningDate}</p>
-                    <p><strong>Employment Type:</strong> {employee.employmentType}</p>
-                    <p><strong>Shift Timing:</strong> {employee.shift}</p>
-                    <p><strong>Email:</strong> {employee.email}</p>
-                    <p><strong>Phone:</strong> {employee.phone}</p>
-                </div>
+                {employee ? (
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                        <p><strong>ID:</strong> {employee.employeeId || employee.id}</p>
+                        <p><strong>Name:</strong> {employee.name}</p>
+                        <p><strong>Job Profile:</strong> {employee.jobProfile || employee.role}</p>
+                        <p><strong>Joining Date:</strong> {employee.joiningDate || '--'}</p>
+                        <p><strong>Employment Type:</strong> {employee.employmentType || '--'}</p>
+                        <p><strong>Shift Timing:</strong> {employee.shift || '--'}</p>
+                        <p><strong>Email:</strong> {employee.email || '--'}</p>
+                        <p><strong>Phone:</strong> {employee.phone || '--'}</p>
+                    </div>
+                ) : (
+                    <div className="text-gray-500">No employee selected.</div>
+                )}
             </div>
 
             {/* ================= TASK TABLE ================= */}

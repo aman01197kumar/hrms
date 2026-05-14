@@ -1,11 +1,27 @@
 import React, { useState } from 'react'
+import { useDispatch } from 'react-redux';
+import { setSelectedEmployee } from '../redux/userSlice';
+import { useNavigate } from 'react-router-dom';
 
 const TeamMembers = ({ employees, setShowAssignModal }) => {
     const [search, setSearch] = useState("");
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const filteredEmployees = employees.filter((emp) =>
         emp.name.toLowerCase().includes(search.toLowerCase())
     );
+
+    const viewEmployeeDetailsHandler = (emp) => {
+        dispatch(setSelectedEmployee(emp));
+        navigate(`/view-employee/${emp.employeeId}`);
+    }
+
+    const assignTaskHandler = (emp) => {
+        dispatch(setSelectedEmployee(emp));
+        setShowAssignModal(true);
+    };
+
     return (
         <div className="bg-white p-5">
             <div className="flex justify-between items-center mb-4">
@@ -40,13 +56,13 @@ const TeamMembers = ({ employees, setShowAssignModal }) => {
                     <tbody>
                         {filteredEmployees.map((emp) => (
                             <tr
-                                key={emp.Emp_id}
+                                key={emp.employeeId}
                                 className="border-b hover:bg-gray-50 transition"
                             >
 
                                 {/* Employee ID */}
                                 <td className="p-3 font-medium text-gray-800">
-                                    {emp.Emp_id}
+                                    {emp.employeeId}
                                 </td>
                                 {/* Employee Name */}
                                 <td className="p-3 font-medium text-gray-800">
@@ -74,18 +90,14 @@ const TeamMembers = ({ employees, setShowAssignModal }) => {
                                 <td className="p-3">
                                     <div className="flex justify-center gap-3">
 
-                                        <a
-                                            href={`/view-employee/${emp.id}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                        >
-                                            <button className="text-indigo-600 text-sm border border-indigo-600 px-3 py-1 rounded-lg hover:bg-indigo-600 hover:text-white transition">
-                                                View
-                                            </button>
-                                        </a>
+
+                                        <button className="text-indigo-600 text-sm border border-indigo-600 px-3 py-1 rounded-lg hover:bg-indigo-600 hover:text-white transition"
+                                            onClick={() => viewEmployeeDetailsHandler(emp)}>
+                                            View
+                                        </button>
 
                                         <button
-                                            onClick={() => setShowAssignModal(true)}
+                                            onClick={() => assignTaskHandler(emp)}
                                             className="text-indigo-600 text-sm border border-indigo-600 px-3 py-1 rounded-lg hover:bg-indigo-600 hover:text-white transition"
                                         >
                                             Assign

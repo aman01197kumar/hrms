@@ -29,6 +29,14 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+         <Route
+          path="/view-employee/:id"
+          element={
+            <ProtectedRoute>
+              <ViewEmployee/>
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="*"

@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PendingTasks from "../modal/PendingTasks";
 import ActiveEmployees from "../modal/ActiveEmployees";
 import AssignTask from "../modal/AssignTask";
 import TeamMembers from "../table/TeamMembers";
 import TaskAssigned from "../table/TaskAssigned";
 import Header from "../layout/Header";
+import axios from "axios";
 
 export default function ManagerDashboard() {
     const [clockedIn, setClockedIn] = useState(false);
@@ -12,6 +13,9 @@ export default function ManagerDashboard() {
     const [showModal, setShowModal] = useState(false);
     const [showEmployeesModal, setShowEmployeesModal] = useState(false);
     const [showAssignModal, setShowAssignModal] = useState(false);
+    const [manager, setManager] = useState(null);
+    const [employees, setEmployees] = useState([]);
+    const token = localStorage.getItem("token");
 
     const [taskData, setTaskData] = useState({
         title: "",
@@ -60,95 +64,116 @@ export default function ManagerDashboard() {
         },
     ];
 
-    const manager = {
-        employeeId: "EMP001",
-        name: "Aman Kumar",
-        role: "Engineering Manager",
-        department: "Product Development",
-        email: "aman@company.com",
-    };
 
-    const employees = [
-        { Emp_id: "EMP101", name: "Rahul", role: "Frontend Dev", status: "Active" },
-        { Emp_id: "EMP102", name: "Sneha", role: "Backend Dev", status: "On Leave" },
-        { Emp_id: "EMP103", name: "Arjun", role: "QA Engineer", status: "Active" },
-    ];
 
+    const fetchManagerData = async () => {
+        try {
+            const response = await axios.get('http://localhost:3000/users/get-manager-info', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            setManager(response?.data?.manager || {});
+        }
+        catch (error) {
+            console.error("Error fetching manager data:", error.message);
+        }
+    }
+
+    const fetchEmployees = async () => {
+        try {
+            const response = await axios.get('http://localhost:3000/users/get-employees-by-manager', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            setEmployees(response?.data?.employees || []);
+        }
+        catch (error) {
+            console.error("Error fetching employees data:", error.message);
+        }
+    }
+
+
+    useEffect(() => {
+        fetchManagerData();
+        fetchEmployees();
+    }, []);
 
     return (
         <>
-        <Header/>
-        <div className="min-h-screen bg-gray-100 p-6">
+            <Header />
+            <div className="min-h-screen bg-gray-100 p-6">
 
-            {/* MANAGER DETAILS */}
-            <div className="bg-white p-5 rounded-xl shadow mb-6">
-                <h2 className="text-lg font-semibold mb-3 text-gray-700">
-                    Manager Details
-                </h2>
-                <div className="grid md:grid-cols-2 gap-3 text-sm text-gray-600">
-                    <p><strong>Employee ID:</strong> {manager.employeeId}</p>
-                    <p><strong>Name:</strong> {manager.name}</p>
-                    <p><strong>Role:</strong> {manager.role}</p>
-                    <p><strong>Department:</strong> {manager.department}</p>
-                    <p><strong>Email:</strong> {manager.email}</p>
-                </div>
-            </div>
-
-            {/* TEAM SUMMARY */}
-            <div className="grid md:grid-cols-3 gap-4 mb-6">
-                <div className="bg-white p-4 rounded-xl shadow text-center">
-                    <p className="text-sm text-gray-500">Total Employees</p>
-                    <h2 className="text-xl font-bold">{employees.length}</h2>
-                </div>
-
-                <div className="bg-white p-4 rounded-xl shadow text-center" onClick={() => setShowEmployeesModal(true)}>
-                    <p className="text-sm text-gray-500">Active Employees</p>
-                    <h2 className="text-xl font-bold">
-                        {employees.filter((e) => e.status === "Active").length}
+                {/* MANAGER DETAILS */}
+                <div className="bg-white p-5 rounded-xl shadow mb-6">
+                    <h2 className="text-lg font-semibold mb-3 text-gray-700">
+                        Manager Details
                     </h2>
+                    <div className="grid md:grid-cols-2 gap-3 text-sm text-gray-600">
+                        <p><strong>Employee ID:</strong> {manager?.employeeId}</p>
+                        <p><strong>Name:</strong> {manager?.name}</p>
+                        <p><strong>Role:</strong> {manager?.role}</p>
+                        <p><strong>Department:</strong> {manager?.department}</p>
+                        <p><strong>Email:</strong> {manager?.email}</p>
+                    </div>
                 </div>
 
-                <div className="bg-white p-4 rounded-xl shadow text-center" onClick={() => setShowModal(true)}>
-                    <p className="text-sm text-gray-500">Pending Tasks</p>
-                    <h2 className="text-xl font-bold">5</h2>
-                </div>
-            </div>
+                {/* TEAM SUMMARY */}
+                <div className="grid md:grid-cols-3 gap-4 mb-6">
+                    <div className="bg-white p-4 rounded-xl shadow text-center">
+                        <p className="text-sm text-gray-500">Total Employees</p>
+                        <h2 className="text-xl font-bold">{employees.length}</h2>
+                    </div>
 
-            {/* EMPLOYEE SECTION */}    
+                    <div className="bg-white p-4 rounded-xl shadow text-center" onClick={() => setShowEmployeesModal(true)}>
+                        <p className="text-sm text-gray-500">Active Employees</p>
+                        <h2 className="text-xl font-bold">
+                            {employees.filter((e) => e.status === "Active").length}
+                        </h2>
+                    </div>
+
+                    <div className="bg-white p-4 rounded-xl shadow text-center" onClick={() => setShowModal(true)}>
+                        <p className="text-sm text-gray-500">Pending Tasks</p>
+                        <h2 className="text-xl font-bold">5</h2>
+                    </div>
+                </div>
+
+                {/* EMPLOYEE SECTION */}
                 <TeamMembers employees={employees} setShowAssignModal={setShowAssignModal} />
-            
-
-            {/* TASKS ASSIGNED */}
-            <TaskAssigned />
 
 
-            {/* EXTRA SECTION */}
-            <div className="mt-6 grid md:grid-cols-2 gap-4">
-                {/* APPROVALS */}
-                <div className="bg-white p-5 rounded-xl shadow">
-                    <h2 className="text-lg font-semibold mb-3 text-gray-700">
-                        Pending Approvals
-                    </h2>
-                    <ul className="text-sm text-gray-600 space-y-2">
-                        <li>Rahul - Leave Request</li>
-                        <li>Sneha - Task Completion Approval</li>
-                    </ul>
+                {/* TASKS ASSIGNED */}
+                <TaskAssigned />
+
+
+                {/* EXTRA SECTION */}
+                <div className="mt-6 grid md:grid-cols-2 gap-4">
+                    {/* APPROVALS */}
+                    <div className="bg-white p-5 rounded-xl shadow">
+                        <h2 className="text-lg font-semibold mb-3 text-gray-700">
+                            Pending Approvals
+                        </h2>
+                        <ul className="text-sm text-gray-600 space-y-2">
+                            <li>Rahul - Leave Request</li>
+                            <li>Sneha - Task Completion Approval</li>
+                        </ul>
+                    </div>
+
+                    {/* ATTENDANCE SNAPSHOT */}
+                    <div className="bg-white p-5 rounded-xl shadow">
+                        <h2 className="text-lg font-semibold mb-3 text-gray-700">
+                            Attendance Snapshot
+                        </h2>
+                        <p className="text-sm text-gray-600">
+                            2 Present | 1 On Leave
+                        </p>
+                    </div>
                 </div>
-
-                {/* ATTENDANCE SNAPSHOT */}
-                <div className="bg-white p-5 rounded-xl shadow">
-                    <h2 className="text-lg font-semibold mb-3 text-gray-700">
-                        Attendance Snapshot
-                    </h2>
-                    <p className="text-sm text-gray-600">
-                        2 Present | 1 On Leave
-                    </p>
-                </div>
+                {showModal && <PendingTasks setShowModal={setShowModal} pendingTasks={pendingTasks} />}
+                {showEmployeesModal && <ActiveEmployees setShowEmployeesModal={setShowEmployeesModal} activeEmployees={activeEmployees} />}
+                {showAssignModal && <AssignTask setShowAssignModal={setShowAssignModal} taskData={taskData} setTaskData={setTaskData} />}
             </div>
-            {showModal && <PendingTasks setShowModal={setShowModal} pendingTasks={pendingTasks} />}
-            {showEmployeesModal && <ActiveEmployees setShowEmployeesModal={setShowEmployeesModal} activeEmployees={activeEmployees} />}
-            {showAssignModal && <AssignTask setShowAssignModal={setShowAssignModal} taskData={taskData} setTaskData={setTaskData} />}
-        </div>
         </>
     );
 }

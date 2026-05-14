@@ -1,3 +1,4 @@
+// Get all employees under a specific managerId
 // Get employees with their manager info (id, name, managerId, managerName)
 import { Employee } from "../models/user.schema.js";
 import jwt from "jsonwebtoken";
@@ -73,7 +74,7 @@ export const authenticateEmployee = async (req, res) => {
                 return res.status(400).json({ message: "Invalid verification code. Please try again." });
             }
 
-            token = jwt.sign({ role: employee.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+            token = jwt.sign({ role: employee.role, employeeId: employee.employeeId, managerId: employee.managerId }, process.env.JWT_SECRET, { expiresIn: '1h' });
         }
         res.status(200).json({ message: "Employee authenticated successfully", token });
     } catch (error) {
@@ -129,15 +130,21 @@ export const getEmployeesWithManagers = async (req, res) => {
 
 export const assignManagerToEmployee = async (req, res) => {
     try {
-        const { employeeId, managerId } = req.body; // business ids (e.g., EMP102)
+        const authHeader = req.headers.authorization;
+
+        if (!authHeader) {
+            return res.status(401).json({ message: "Authorization header missing" });
+        }
+        const token = authHeader.split(" ")[1];
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);// business ids (e.g., EMP102)
 
         // Find employee and manager by business id
-        const employee = await Employee.findOne({ employeeId });
+        const employee = await Employee.findOne(decoded.employeeId);
         if (!employee) {
             return res.status(404).json({ message: "Employee not found" });
         }
 
-        const manager = await Employee.findOne({ employeeId: managerId });
+        const manager = await Employee.findOne(decoded.managerId);
         if (!manager) {
             return res.status(404).json({ message: "Manager not found" });
         }
@@ -146,6 +153,48 @@ export const assignManagerToEmployee = async (req, res) => {
         await employee.save();
 
         res.status(200).json({ message: "Manager assigned to employee successfully" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+
+export const getManagerInfo = async (req, res) => {
+    try {
+        
+        const authHeader = req.headers.authorization;
+
+        if (!authHeader) {
+            return res.status(401).json({ message: "Authorization header missing" });
+        }
+        const token = authHeader.split(" ")[1];
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const manager = await Employee.findOne({ managerId: decoded.managerId });
+        if (!manager) {
+            return res.status(404).json({ message: "Manager not found" });
+        }
+        res.status(200).json({ manager });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const getEmployeesByManager = async (req, res) => {
+    try {
+        const authHeader = req.headers.authorization;
+
+        if (!authHeader) {
+            return res.status(401).json({ message: "Authorization header missing" });
+        }
+        const token = authHeader.split(" ")[1];
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);  
+        const managerId = decoded.employeeId;
+        if (!managerId) {
+            return res.status(400).json({ message: "managerId is required in params" });
+        }
+        // Find all employees whose managerId matches
+        const employees = await Employee.find({ managerId });
+        res.status(200).json({ employees });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

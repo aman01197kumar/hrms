@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { userroute } from './routes/user.routes.js';
+import { taskroute } from './routes/task.route.js';
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ try{
 
 
 app.use('/users', userroute);
+app.use('/tasks', taskroute);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

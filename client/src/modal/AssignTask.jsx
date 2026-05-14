@@ -1,6 +1,32 @@
+import axios from 'axios';
 import React from 'react'
+import { useSelector } from 'react-redux';
 
 const AssignTask = ({ setShowAssignModal, taskData, setTaskData }) => {
+
+    const employee = useSelector((state) => state.user.selectedEmployee);
+
+    const assignTaskHandler = async () => {
+        try {
+            const response = await axios.post('http://localhost:3000/tasks/assign-task', {
+                employeeId: employee.employeeId,
+                title: taskData.title,
+                description: taskData.description,
+                deadline: taskData.deadline,
+                priority: taskData.priority
+            },
+                {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem("token")}`
+                    }
+                });
+            console.log("Task Assigned:", response?.data);
+            setShowAssignModal(false);
+
+        } catch (error) {
+            console.error("Error assigning task:", error);
+        }
+    };
     return (
         <div
             className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50"
@@ -23,10 +49,10 @@ const AssignTask = ({ setShowAssignModal, taskData, setTaskData }) => {
 
                 {/* Employee Info */}
                 <div className="bg-gray-100 p-3 rounded-lg mb-4 text-sm">
-                    <p><strong>Employee ID:</strong> EMP101</p>
-                    <p><strong>Name:</strong> Aman Kumar</p>
-                    <p><strong>Job Profile:</strong> Frontend Developer</p>
-                    <p><strong>Manager:</strong> Rahul Sharma</p>
+                    <p><strong>Employee ID:</strong> {employee?.employeeId || employee?.id}</p>
+                    <p><strong>Name:</strong> {employee?.name}</p>
+                    <p><strong>Job Profile:</strong> {employee?.jobProfile || employee?.role}</p>
+
                 </div>
 
                 {/* Form */}
@@ -88,16 +114,7 @@ const AssignTask = ({ setShowAssignModal, taskData, setTaskData }) => {
                     </button>
 
                     <button
-                        onClick={() => {
-                            console.log("Task Assigned:", taskData);
-                            setShowAssignModal(false);
-                            setTaskData({
-                                title: "",
-                                description: "",
-                                deadline: "",
-                                priority: "Medium",
-                            });
-                        }}
+                        onClick={assignTaskHandler}
                         className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
                     >
                         Assign
