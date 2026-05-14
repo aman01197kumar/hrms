@@ -12,7 +12,7 @@ const AdminDashboard = () => {
 
     const fetchEmployees = async () => {
         try {
-            const response = await axios.get('http://localhost:3000/users/get-all-employees');
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}users/get-all-employees`);
             const filteredResponse = response?.data?.employees?.filter((emp) => emp.role === 'Employee');
             const filteredManagers = response?.data?.employees?.filter((emp) => emp.role === 'Manager');
             setEmployees(filteredResponse || []);

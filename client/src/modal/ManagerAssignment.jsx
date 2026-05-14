@@ -30,7 +30,7 @@ const ManagerAssignment = ({ employees, managers, setShowAssignModal }) => {
     const assignManagerToEmployeeHandler = async () => {
         try {
             setIsLoading(true);
-            const response = await axios.post('http://localhost:3000/users/assign-manager', { employeeId, managerId })
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}users/assign-manager`, { employeeId, managerId })
             toast.success(response?.data?.message);
             setShowAssignModal(false);
         }

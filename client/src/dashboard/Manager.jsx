@@ -52,7 +52,7 @@ export default function ManagerDashboard() {
 
     const fetchManagerData = async () => {
         try {
-            const response = await axios.get('http://localhost:3000/users/get-employee-info', {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}users/get-employee-info`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -66,7 +66,7 @@ export default function ManagerDashboard() {
 
     const fetchEmployees = async () => {
         try {
-            const response = await axios.get('http://localhost:3000/users/get-employees-by-manager', {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}users/get-employees-by-manager`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -80,7 +80,7 @@ export default function ManagerDashboard() {
 
     const getPendingTasks = async () => {
         try {
-            const response = await axios.get('http://localhost:3000/tasks/get-pending-tasks', {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}tasks/get-pending-tasks`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }

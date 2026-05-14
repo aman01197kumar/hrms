@@ -11,7 +11,7 @@ const AssignTask = ({ setShowAssignModal, taskData, setTaskData }) => {
     const assignTaskHandler = async () => {
         try {
             setIsLoading(true);
-            const response = await axios.post('http://localhost:3000/tasks/assign-task', {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}tasks/assign-task`, {
                 employeeId: employee.employeeId,
                 title: taskData.title,
                 description: taskData.description,

@@ -38,7 +38,7 @@ export default function Login() {
 
     try {
       setIsLoading(true);
-      const response = await axios.post('http://localhost:3000/users/authenticate-employee', {verificationCode});
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}users/authenticate-employee`, {verificationCode});
       localStorage.setItem('token', response?.data?.token);
       navigate("/dashboard");
     } catch (error) {

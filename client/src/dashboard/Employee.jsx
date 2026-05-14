@@ -15,7 +15,7 @@ export default function EmployeeDashboard() {
 
     const fetchEmployeeData = async () => {
         try {
-            const response = await axios.get('http://localhost:3000/users/get-employee-info', {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}users/get-employee-info`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem("token")}`
                 }
@@ -30,7 +30,7 @@ export default function EmployeeDashboard() {
 
     const fetchMyTasks = async () => {
         try {
-            const response = await axios.get('http://localhost:3000/tasks/get-my-tasks', {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}tasks/get-my-tasks`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem("token")}`
                 }

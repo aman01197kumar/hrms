@@ -37,7 +37,7 @@ const SelectedTask = ({ selectedTask, setShowModal }) => {
         try {
             setIsLoading(true);
             const response = await axios.patch(
-                `http://localhost:3000/tasks/update-task/${selectedTask._id}`,
+                `${import.meta.env.VITE_API_URL}tasks/update-task/${selectedTask._id}`,
                 formData,
             );
             toast.success(response?.data?.message);
