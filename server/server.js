@@ -7,9 +7,13 @@ import { taskroute } from './routes/task.route.js';
 
 dotenv.config();
 
+
 const app = express();
 app.use(cors());
 app.use(express.json());
+// Serve uploaded files statically
+import path from 'path';
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 const PORT = process.env.PORT || 3001;
 

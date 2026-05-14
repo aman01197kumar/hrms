@@ -1,5 +1,3 @@
-// import { Employee } from "../models/employee.js";
-// import { Task } from "../models/task.js";
 import { Task } from "../models/task.schema.js";
 import { Employee } from "../models/user.schema.js";
 import jwt from "jsonwebtoken";
@@ -17,7 +15,7 @@ export const assignTask = async (req, res) => {
         const token = authHeader.split(" ")[1];
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const managerId = decoded.employeeId; // business id of the manager (e.g., EMP101)
-        const { employeeId, employeeName, jobProfile, title, description, deadline, priority } = req.body;
+        const { employeeId, employeeName, jobProfile, title, description, deadline, priority, duration, fileUpload, note } = req.body;
 
         // const managerId = decoded.employeeId; // business id of the manager (e.g., EMP101)
 
@@ -55,6 +53,9 @@ export const assignTask = async (req, res) => {
             deadline,
             priority,
             jobProfile,
+            duration,
+            fileUpload,
+            note,
         });
 
         return res.status(201).json({
@@ -151,3 +152,38 @@ export const getMyTasks = async (req, res) => {
         });
     }
 }
+    export const updateTaskStatus = async (req, res) => {
+        try {
+            const { taskId } = req.params;
+            const { fileUpload } = req.file;
+            const {status, note} = req.body
+    
+            // Only allow valid status values
+            const validStatuses = ["Pending", "In Progress", "Completed"];
+            if (status && !validStatuses.includes(status)) {
+                return res.status(400).json({ message: "Invalid status value" });
+            }
+    
+            const updateFields = {};
+            if (status) updateFields.status = status;
+            if (note) updateFields.note = note;
+            if (fileUpload) updateFields.fileUpload = fileUpload;
+    
+            const updatedTask = await Task.findByIdAndUpdate(
+                taskId,
+                { $set: updateFields },
+                { new: true }
+            );
+    
+            if (!updatedTask) {
+                return res.status(404).json({ message: "Task not found" });
+            }
+    
+            return res.status(200).json({
+                message: "Task updated successfully",
+                task: updatedTask,
+            });
+        } catch (error) {
+            return res.status(500).json({ message: error.message });
+        }
+    };

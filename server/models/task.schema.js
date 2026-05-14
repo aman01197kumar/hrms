@@ -20,7 +20,20 @@ const taskSchema = new mongoose.Schema(
       index: true,
     },
 
+
     deadline: Date,
+    duration: {
+      type: Number, // duration in hours or minutes
+      required: false,
+    },
+    fileUpload: {
+      type: String, // file path or URL
+      required: false,
+    },
+    note: {
+      type: String,
+      required: false,
+    },
 
     jobProfile: {
       type: String,

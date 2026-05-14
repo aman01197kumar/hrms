@@ -7,6 +7,10 @@ export default function EmployeeDashboard() {
     const [isClockedIn, setIsClockedIn] = useState(false);
     const [employee, setEmployee] = useState({});
     const [tasks, setTasks] = useState([]);
+    const [selectedTask, setSelectedTask] = useState(null);
+    const [updatedStatus, setUpdatedStatus] = useState("");
+    const [duration, setDuration] = useState("");
+    const [notes, setNotes] = useState("");
 
     const fetchEmployeeData = async () => {
         try {
@@ -23,21 +27,6 @@ export default function EmployeeDashboard() {
         }
     }
 
-
-    // const [tasks, setTasks] = useState([
-    //     {
-    //         id: 1,
-    //         title: "Complete onboarding docs",
-    //         status: "Pending",
-    //         description: "Finish HR onboarding and upload documents",
-    //     },
-    //     {
-    //         id: 2,
-    //         title: "Submit weekly report",
-    //         status: "In Progress",
-    //         description: "Prepare and submit weekly status report",
-    //     },
-    // ]);
 
     const fetchMyTasks = async () => {
         try {
@@ -58,10 +47,6 @@ export default function EmployeeDashboard() {
         fetchMyTasks();
     }, []);
 
-    const [selectedTask, setSelectedTask] = useState(null);
-    const [updatedStatus, setUpdatedStatus] = useState("");
-    const [duration, setDuration] = useState("");
-    const [notes, setNotes] = useState("");
 
     const handleClock = () => {
         setIsClockedIn((prev) => !prev);
