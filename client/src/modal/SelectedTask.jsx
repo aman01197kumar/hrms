@@ -52,7 +52,8 @@ const SelectedTask = ({ selectedTask, setShowModal }) => {
     };
     return (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center">
-            <div className="bg-white w-96 p-6 rounded-xl shadow-lg space-y-4">
+            <div className="bg-white w-full max-w-md p-6 rounded-xl shadow-lg space-y-5">
+
                 <h2 className="text-lg font-semibold">
                     {selectedTask.title}
                 </h2>
@@ -64,9 +65,9 @@ const SelectedTask = ({ selectedTask, setShowModal }) => {
                 {/* STATUS */}
                 <div>
                     <p className="text-sm font-medium mb-2">Update Status</p>
-                    <div className="flex gap-3 text-sm">
+                    <div className="flex flex-col gap-2 text-sm">
                         {["Pending", "In Progress", "Completed"].map((status) => (
-                            <label key={status} className="flex items-center gap-1">
+                            <label key={status} className="flex items-center gap-2">
                                 <input
                                     type="radio"
                                     value={status}
@@ -87,7 +88,7 @@ const SelectedTask = ({ selectedTask, setShowModal }) => {
                             type="number"
                             value={duration}
                             onChange={(e) => setDuration(e.target.value)}
-                            className="w-full mt-1 px-2 py-1 border rounded"
+                            className="w-full mt-1 px-2 py-2 border rounded"
                         />
                     </div>
                 )}
@@ -102,11 +103,11 @@ const SelectedTask = ({ selectedTask, setShowModal }) => {
                     />
 
                     {file && (
-                        <div className="flex justify-between items-center mt-2 bg-gray-100 px-2 py-1 rounded">
-                            <span className="text-xs">{file.name}</span>
+                        <div className="mt-2 bg-gray-100 px-3 py-2 rounded text-xs space-y-1">
+                            <span className="block">{file.name}</span>
                             <button
                                 onClick={removeFile}
-                                className="text-red-500 text-xs"
+                                className="text-red-500"
                             >
                                 Remove
                             </button>
@@ -120,26 +121,27 @@ const SelectedTask = ({ selectedTask, setShowModal }) => {
                     <textarea
                         value={notes}
                         onChange={(e) => setNotes(e.target.value)}
-                        className="w-full mt-1 px-2 py-1 border rounded"
+                        className="w-full mt-1 px-2 py-2 border rounded"
                     />
                 </div>
 
                 {/* ACTIONS */}
-                <div className="flex justify-end gap-3">
+                <div className="flex flex-col gap-2">
                     <button
                         onClick={() => setShowModal(false)}
-                        className="px-3 py-1 bg-gray-200 rounded"
+                        className="w-full px-3 py-2 bg-gray-200 rounded"
                     >
                         Cancel
                     </button>
 
                     <button
                         onClick={handleSave}
-                        className="px-3 py-1 bg-indigo-600 text-white rounded"
+                        className="w-full px-3 py-2 bg-indigo-600 text-white rounded"
                     >
                         {isLoading ? "Saving..." : "Save"}
                     </button>
                 </div>
+
             </div>
             <Toaster />
         </div>

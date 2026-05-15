@@ -11,12 +11,12 @@ const AdminDashboard = () => {
 
     const BASE_URL = import.meta.env.VITE_API_URL;
 
-    
+
     const fetchEmployees = async () => {
-    
+
         try {
             const response = await axios.get(`${BASE_URL}/users/get-all-employees`);
-            
+
             const filteredResponse = response?.data?.employees?.filter((emp) => emp.role === 'Employee');
             const filteredManagers = response?.data?.employees?.filter((emp) => emp.role === 'Manager');
             setEmployees(filteredResponse || []);
@@ -25,7 +25,7 @@ const AdminDashboard = () => {
         catch (error) {
             toast.error(error?.response?.data?.message);
         }
-        
+
     }
 
     useEffect(() => {
@@ -43,7 +43,7 @@ const AdminDashboard = () => {
 
 
                 {/* ================= STATS ================= */}
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid md:grid-cols-3 gap-4">
                     <div className="bg-white p-4 rounded-xl shadow text-center">
                         <p className="text-gray-500">Total Managers</p>
                         <h2 className="text-xl font-bold">{managers.length}</h2>
@@ -140,8 +140,8 @@ const AdminDashboard = () => {
                         Employee → Manager Assignment
                     </h2>
 
-                    <div className="overflow-hidden rounded-lg border">
-                        <table className="w-full table-fixed text-sm">
+                    <div className="overflow-x-auto rounded-lg border">
+                        <table className="min-w-[600px] w-full text-sm">
                             <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
                                 <tr>
                                     <th className="px-4 py-3 text-left">Employee</th>
@@ -176,7 +176,7 @@ const AdminDashboard = () => {
                 </div>
 
             </div>
-            <Toaster/>
+            <Toaster />
         </>
     );
 };

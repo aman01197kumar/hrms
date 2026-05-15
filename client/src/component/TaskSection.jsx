@@ -19,10 +19,8 @@ export default function TaskSection({ tasks, setTasks }) {
   return (
     <>
       {/* TASK LIST */}
-      <div className="bg-white p-5 rounded-xl shadow md:col-span-2">
-        <h2 className="text-lg font-semibold mb-4 text-gray-700">
-          Assigned Tasks
-        </h2>
+      <div className="bg-white rounded-xl shadow md:col-span-2">
+
 
         <div className="space-y-3">
           {tasks.map((task) => (
@@ -50,7 +48,7 @@ export default function TaskSection({ tasks, setTasks }) {
       </div>
 
       {/* MODAL */}
-      {selectedTask && <SelectedTask selectedTask={selectedTask} setShowModal={setShowModal} />}
+      {showModal && <SelectedTask selectedTask={selectedTask} setShowModal={setShowModal} />}
     </>
   );
 }

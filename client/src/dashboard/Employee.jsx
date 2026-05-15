@@ -92,16 +92,6 @@ export default function EmployeeDashboard() {
                         Employee Dashboard
                     </h1>
 
-                    <button
-                        onClick={handleClock}
-                        className={`px-4 py-2 rounded-lg font-medium transition 
-            ${isClockedIn
-                                ? "bg-red-500 hover:bg-red-600 text-white"
-                                : "bg-green-500 hover:bg-green-600 text-white"
-                            }`}
-                    >
-                        {isClockedIn ? "Clock Out" : "Clock In"}
-                    </button>
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-6">

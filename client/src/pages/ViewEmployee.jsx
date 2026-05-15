@@ -162,7 +162,7 @@ const ViewEmployee = () => {
             <div className="bg-white p-6 rounded-2xl shadow">
                 <h2 className="text-xl font-semibold mb-4">Performance</h2>
 
-                <div className="grid grid-cols-3 gap-4 text-center">
+                <div className="grid md:grid-cols-3 gap-4 text-center">
                     <div className="bg-gray-100 p-4 rounded-xl">
                         <p className="text-sm">Tasks Completed</p>
                         <h3 className="text-lg font-bold">24</h3>

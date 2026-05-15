@@ -79,22 +79,24 @@ export default function EmployeeOnboardingModal({ isOpen, onClose }) {
 
     return (
         <div
-            className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50"
+            className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50 px-2"
             onClick={onClose}
         >
             <div
-                className="bg-white w-[700px] max-h-[90vh] overflow-y-auto p-6 rounded-2xl shadow-xl"
+                className="bg-white w-[95%] sm:w-[90%] md:w-[700px] max-h-[90vh] overflow-y-auto p-4 sm:p-6 rounded-2xl shadow-xl"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header */}
-                <div className="flex justify-between mb-4">
-                    <h2 className="text-xl font-semibold">Employee Onboarding</h2>
+                <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-lg sm:text-xl font-semibold">
+                        Employee Onboarding
+                    </h2>
                     <button onClick={onClose}>✕</button>
                 </div>
 
                 {/* Form */}
                 <form onSubmit={handleSubmit}>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
                         {/* Basic Info */}
                         <input name="name" value={formData.name} placeholder="Full Name" className="input" onChange={handleChange} />
@@ -125,19 +127,33 @@ export default function EmployeeOnboardingModal({ isOpen, onClose }) {
                         <input name="accountNumber" value={formData.accountNumber} placeholder="Account Number" className="input" onChange={handleChange} />
                         <input name="ifsc" value={formData.ifsc} placeholder="IFSC Code" className="input" onChange={handleChange} />
 
-                        {/* Other */}
-                        <input name="parmanent_address" value={formData.parmanent_address} placeholder="Address" className="input col-span-2" onChange={handleChange} />
+                        {/* Full width on all screens */}
+                        <input
+                            name="parmanent_address"
+                            value={formData.parmanent_address}
+                            placeholder="Address"
+                            className="input md:col-span-2"
+                            onChange={handleChange}
+                        />
+
                         <input name="emergencyContact" value={formData.emergencyContact} placeholder="Emergency Contact" className="input" onChange={handleChange} />
                     </div>
 
                     {/* Actions */}
-                    <div className="flex justify-end gap-3 mt-6">
-                        <button type="button" onClick={onClose} className="px-4 py-2 border rounded-lg">
+                    <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="px-4 py-2 border rounded-lg w-full sm:w-auto"
+                        >
                             Cancel
                         </button>
 
-                        <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
-                            {isLoading?'processing...':'Onboard Employee'}
+                        <button
+                            type="submit"
+                            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 w-full sm:w-auto"
+                        >
+                            {isLoading ? 'processing...' : 'Onboard Employee'}
                         </button>
                     </div>
                 </form>
@@ -152,6 +168,7 @@ export default function EmployeeOnboardingModal({ isOpen, onClose }) {
                     pin={pin}
                 />
             )}
+
             <Toaster />
         </div>
     );

@@ -16,25 +16,25 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-white shadow-md px-6 py-3 flex justify-between items-center">
+    <header className="bg-white shadow-md px-4 sm:px-6 py-3 flex justify-between items-center">
 
-      {/* Logo / Company Name */}
+      {/* Logo */}
       <div className="flex items-center gap-2">
-        <div className="w-10 h-10 bg-indigo-600 text-white flex items-center justify-center rounded-lg font-bold">
+        <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-600 text-white flex items-center justify-center rounded-lg font-bold">
           HR
         </div>
-        <h1 className="text-lg font-semibold text-gray-800">
+        <h1 className="text-sm sm:text-lg font-semibold text-gray-800 whitespace-nowrap">
           HRMS Portal
         </h1>
       </div>
 
       {/* Right Section */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 sm:gap-4">
 
-        {/* Clock In / Out Button */}
+        {/* Clock Button */}
         <button
           onClick={handleClock}
-          className={`px-4 py-2 rounded-lg text-white text-sm transition ${isClockedIn
+          className={`px-2 sm:px-4 py-2 rounded-lg text-white text-xs sm:text-sm transition whitespace-nowrap ${isClockedIn
               ? "bg-red-500 hover:bg-red-600"
               : "bg-green-500 hover:bg-green-600"
             }`}
@@ -42,10 +42,10 @@ const Header = () => {
           {isClockedIn ? "Clock Out" : "Clock In"}
         </button>
 
-        {/* Logout Button */}
+        {/* Logout */}
         <button
           onClick={handleLogout}
-          className="px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-100"
+          className="px-2 sm:px-4 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm hover:bg-gray-100 whitespace-nowrap"
         >
           Logout
         </button>
