@@ -6,12 +6,14 @@ import { useSelector } from 'react-redux';
 const AssignTask = ({ setShowAssignModal, taskData, setTaskData }) => {
     const [isLoading, setIsLoading] = useState(false);
 
+    const BASE_URL = import.meta.env.VITE_API_URL;
+
     const employee = useSelector((state) => state.user.selectedEmployee);
 
     const assignTaskHandler = async () => {
         try {
             setIsLoading(true);
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}tasks/assign-task`, {
+            const response = await axios.post(`${BASE_URL}/tasks/assign-task`, {
                 employeeId: employee.employeeId,
                 title: taskData.title,
                 description: taskData.description,

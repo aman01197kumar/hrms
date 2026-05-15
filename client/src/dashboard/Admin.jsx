@@ -9,10 +9,14 @@ const AdminDashboard = () => {
     const [employees, setEmployees] = useState([]);
     const [managers, setManagers] = useState([]);
 
+    const BASE_URL = import.meta.env.VITE_API_URL;
 
+    
     const fetchEmployees = async () => {
+    
         try {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL}users/get-all-employees`);
+            const response = await axios.get(`${BASE_URL}/users/get-all-employees`);
+            
             const filteredResponse = response?.data?.employees?.filter((emp) => emp.role === 'Employee');
             const filteredManagers = response?.data?.employees?.filter((emp) => emp.role === 'Manager');
             setEmployees(filteredResponse || []);

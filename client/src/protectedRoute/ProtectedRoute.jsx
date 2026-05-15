@@ -5,7 +5,7 @@ const ProtectedRoute = ({ children }) => {
 
   // If no token → redirect to login
   if (!token) {
-    return <Navigate to="/signin" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return children;

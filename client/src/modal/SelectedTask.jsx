@@ -9,6 +9,8 @@ const SelectedTask = ({ selectedTask, setShowModal }) => {
     const [file, setFile] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
+    const BASE_URL = import.meta.env.VITE_API_URL;
+
     const handleFileChange = (e) => {
         const uploadedFile = e.target.files[0];
         if (uploadedFile) {
@@ -37,7 +39,7 @@ const SelectedTask = ({ selectedTask, setShowModal }) => {
         try {
             setIsLoading(true);
             const response = await axios.patch(
-                `${import.meta.env.VITE_API_URL}tasks/update-task/${selectedTask._id}`,
+                `${BASE_URL}/tasks/update-task/${selectedTask._id}`,
                 formData,
             );
             toast.success(response?.data?.message);

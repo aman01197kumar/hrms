@@ -12,6 +12,8 @@ export default function Login() {
 
   const navigate = useNavigate();
 
+  const BASE_URL = import.meta.env.VITE_API_URL;
+
   const handleChange = (value, index) => {
     if (!/^\d?$/.test(value)) return; // only digits
 
@@ -38,7 +40,7 @@ export default function Login() {
 
     try {
       setIsLoading(true);
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}users/authenticate-employee`, {verificationCode});
+      const response = await axios.post(`${BASE_URL}/users/authenticate-employee`, {verificationCode});
       localStorage.setItem('token', response?.data?.token);
       navigate("/dashboard");
     } catch (error) {

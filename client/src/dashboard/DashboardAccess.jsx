@@ -9,10 +9,10 @@ import toast from "react-hot-toast";
 const DashboardAccess = () => {
     const [role, setRole] = useState(null);
     const token = localStorage.getItem("token");
-
+    const BASE_URL = import.meta.env.VITE_API_URL;
 
     if (!token) {
-        return <Navigate to="/signin" replace />;
+        return <Navigate to="/" replace />;
     }
 
 
@@ -20,7 +20,7 @@ const DashboardAccess = () => {
     const fetchUserRole = async () => {
         try {
 
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}users/get-role`, {}, {
+            const response = await axios.post(`${BASE_URL}/users/get-role`, {}, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -53,7 +53,7 @@ const DashboardAccess = () => {
             return <AdminDashboard />;
 
         default:
-            return <Navigate to="/signin" replace />;
+            return <Navigate to="/" replace />;
     }
 };
 

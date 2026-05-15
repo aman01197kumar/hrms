@@ -6,10 +6,11 @@ const TaskAssigned = () => {
     const [search, setSearch] = useState("");
     const [tasksData, setTasksData] = useState([]);
 
+    const BASE_URL = import.meta.env.VITE_API_URL;
 
     const fetchedTasksData = async()=>{
             try {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}tasks/get-tasks-assigned`, {
+                const response = await axios.get(`${BASE_URL}/tasks/get-tasks-assigned`, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem("token")}`
                     }

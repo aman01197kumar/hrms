@@ -25,6 +25,7 @@ export default function EmployeeOnboardingModal({ isOpen, onClose }) {
     const [pin, setPin] = useState(null);
     const [isLoading, setIsloading] = useState(false);
 
+    const BASE_URL = import.meta.env.VITE_API_URL;
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -35,7 +36,7 @@ export default function EmployeeOnboardingModal({ isOpen, onClose }) {
         // TODO: API call here
         try {
             setIsloading(true);
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}users/onboard-employee`, formData);
+            const response = await axios.post(`${BASE_URL}/users/onboard-employee`, formData);
             setPin(response?.data?.pin);
             setShowModal(true);
 

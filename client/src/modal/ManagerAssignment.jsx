@@ -10,6 +10,7 @@ const ManagerAssignment = ({ employees, managers, setShowAssignModal }) => {
     const [managerSearch, setManagerSearch] = useState("");
     const [isLoading, setIsLoading] = useState(false)
 
+const BASE_URL = import.meta.env.VITE_API_URL;
 
     const filteredManagers = managers.filter((mgr) => {
         const q = managerSearch.toLowerCase();
@@ -30,7 +31,7 @@ const ManagerAssignment = ({ employees, managers, setShowAssignModal }) => {
     const assignManagerToEmployeeHandler = async () => {
         try {
             setIsLoading(true);
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}users/assign-manager`, { employeeId, managerId })
+            const response = await axios.post(`${BASE_URL}/users/assign-manager`, { employeeId, managerId })
             toast.success(response?.data?.message);
             setShowAssignModal(false);
         }
